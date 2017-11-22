@@ -29,9 +29,10 @@ async def on_message(message):
             btcPrice = "{0:.8f}".format(data['RAW'][symbol]['BTC']['PRICE'])
             print(btcPrice)
             percent = "{0:.2f}".format(data['RAW'][symbol]['BTC']['CHANGEPCT24HOUR'])
-            em = discord.Embed(title=symbol, color=0x004080)
-            em.add_field(name="BTC Price:", value="\u20bf"+btcPrice, inline=True)
-            em.add_field(name="USD Price:", value="$"+price, inline=True)
+
+            em = discord.Embed(title="**"+symbol+"**", description="*BTC Price*: \u20bf"+btcPrice+" | *USD Price*: $"+price, color=0x004080)
+            # em.add_field(name="BTC Price:", value="\u20bf"+btcPrice, inline=True)
+            # em.add_field(name="USD Price:", value="$"+price, inline=True)
             em.set_footer(text="24hr Change: "+str(percent)+"%")
 
             await client.send_message(message.channel, embed=em)
@@ -74,16 +75,11 @@ async def on_message(message):
         print(name)
         market = requests.get("https://api.coinmarketcap.com/v1/ticker/" + name.lower())
         market = json.loads(market.text)
-        if not market:
-            rank = "Unknown"
-        else:
-            rank = market[0]["rank"]
         marketcap = int(float(market[0]['market_cap_usd']))
 
         em = discord.Embed(title=name, color=0x004080)
         em.add_field(name="Twitter:", value=twitter, inline=True)
         em.add_field(name="Website:", value=website, inline=True)
-        em.add_field(name="Rank:", value=rank, inline=False)
         em.add_field(name="Market Cap USD:", value="$"+"{:,}".format(marketcap), inline=True)
         em.add_field(name="Top Exchange:", value=topexchange, inline=True)
         await client.send_message(message.channel, embed=em)
