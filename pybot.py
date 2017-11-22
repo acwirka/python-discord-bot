@@ -17,23 +17,40 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.content.startswith('!c'):
-        msg = message.content
+        msg = message.content.split()
         print(msg)
-        symbol = msg[3:8].upper()
-        print(symbol)
-        r = requests.get("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + symbol + "&tsyms=BTC,USD")
+        if len(msg) < 3:
+            symbol = msg[1].upper()
+            print(symbol)
+            r = requests.get("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + symbol + "&tsyms=BTC,USD")
 
-        data = r.json()
-        price = "{0:.2f}".format(data['RAW'][symbol]['USD']['PRICE'])
-        btcPrice = "{0:.8f}".format(data['RAW'][symbol]['BTC']['PRICE'])
-        print(btcPrice)
-        percent = "{0:.2f}".format(data['RAW'][symbol]['BTC']['CHANGEPCT24HOUR'])
-        em = discord.Embed(title=symbol, color=0x004080)
-        em.add_field(name="BTC Price:", value="\u20bf"+btcPrice, inline=True)
-        em.add_field(name="USD Price:", value="$"+price, inline=True)
-        em.set_footer(text="24hr Change: "+str(percent)+"%")
+            data = r.json()
+            price = "{0:.2f}".format(data['RAW'][symbol]['USD']['PRICE'])
+            btcPrice = "{0:.8f}".format(data['RAW'][symbol]['BTC']['PRICE'])
+            print(btcPrice)
+            percent = "{0:.2f}".format(data['RAW'][symbol]['BTC']['CHANGEPCT24HOUR'])
+            em = discord.Embed(title=symbol, color=0x004080)
+            em.add_field(name="BTC Price:", value="\u20bf"+btcPrice, inline=True)
+            em.add_field(name="USD Price:", value="$"+price, inline=True)
+            em.set_footer(text="24hr Change: "+str(percent)+"%")
 
-        await client.send_message(message.channel, embed=em)
+            await client.send_message(message.channel, embed=em)
+        else:
+            symbol = msg[1].upper()
+            print(symbol)
+            r = requests.get("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + symbol + "&tsyms=BTC,USD")
+
+            data = r.json()
+            price = "{0:.2f}".format(data['RAW'][symbol]['USD']['PRICE'])
+            btcPrice = "{0:.8f}".format(data['RAW'][symbol]['BTC']['PRICE'])
+            print(btcPrice)
+            percent = "{0:.2f}".format(data['RAW'][symbol]['BTC']['CHANGEPCT24HOUR'])
+            em = discord.Embed(title=symbol, color=0x004080)
+            em.add_field(name="BTC Price:", value="\u20bf" + btcPrice, inline=True)
+            em.add_field(name="USD Price:", value="$" + price, inline=True)
+            em.set_footer(text="24hr Change: " + str(percent) + "%")
+
+            await client.send_message(message.channel, embed=em)
     elif message.content.startswith('!info'):
         msg = message.content.split()
         print(msg)
@@ -57,7 +74,7 @@ async def on_message(message):
         print(name)
         market = requests.get("https://api.coinmarketcap.com/v1/ticker/" + name.lower())
         market = json.loads(market.text)
-        if not market[0]["rank"]:
+        if not market:
             rank = "Unknown"
         else:
             rank = market[0]["rank"]
